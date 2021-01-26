@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 function Auto() {
   // set initial input search state 
@@ -6,7 +6,8 @@ function Auto() {
   // set initial option list to an empty array n change it to pokemon data when input field is clicked
   const [ options, setOptions ] = useState([])
   const [ display, setDisplay ] = useState(false)
-  
+  //set ref on div wrapper 
+  const wrapperRef = useRef();
 
   // on page load, fetch info 
   useEffect(() => {
@@ -28,9 +29,26 @@ function Auto() {
     setOptions(pokemons)
   }, [])
 
+  //set display to false when area outside of component is clicked 
+  useEffect(() => {
+
+    const handleOutsideClick = (e) => {
+      if(wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+        setDisplay(false)
+      }
+    }
+
+    //add event listener to window 
+    window.addEventListener('mousedown', handleOutsideClick)
+
+    //unbind event listener 
+    return () => {
+      window.removeEventListener('mousedown', handleOutsideClick)
+    }
+  })
 
   return (
-    <div>
+    <div ref={wrapperRef}>
       <label htmlFor="auto"></label> 
       <input type="text"
         id='auto'
